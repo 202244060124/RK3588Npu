@@ -30,7 +30,6 @@
 #include "rknn_api.h"
 using namespace std;
 
-
 static void DumpTensorAttrData(rknn_tensor_attr* attr)
 {
     printf("  index=%d, name=%s, n_dims=%d, dims=[%d, %d, %d, %d], n_elems=%d, size=%d, fmt=%s, type=%s, qnt_type=%s, "
@@ -248,10 +247,10 @@ int main(int argc, char** argv)
     vector<int32_t> out_zps;
     char text[256];
 
-
     while (1) {
         if (!cap.read(orig_img)) {
             printf("Capture read error");
+            cap.release();
             break;
         }
         cv::resize(orig_img, resize_img, cv::Size(input_width, input_height));
@@ -262,9 +261,9 @@ int main(int argc, char** argv)
         gettimeofday(&start_time, NULL);
         rknn_inputs_set(ctx, io_num.n_input, inputs);
 
-        for (int i = 0; i < io_num.n_output; i++) {
-            outputs[i].want_float = 0;
-        }
+        // for (int i = 0; i < io_num.n_output; i++) {
+        //     outputs[i].want_float = 0;
+        // }
 
         ret = rknn_run(ctx, NULL);
         ret = rknn_outputs_get(ctx, io_num.n_output, outputs, NULL);
